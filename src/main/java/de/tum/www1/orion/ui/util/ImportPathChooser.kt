@@ -45,9 +45,8 @@ class ImportPathChooser(val project: Project, val exercise: ProgrammingExercise,
             }
             row {
                 chosenPathField = textFieldWithBrowseButton(
-                    translate("orion.dialog.pathchooser.browsedialog.title"),
+                    FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(translate("orion.dialog.pathchooser.browsedialog.title")),
                     null,
-                    FileChooserDescriptorFactory.createSingleFolderDescriptor()
                 ).bindText({ suggestImportPath() }){it.toNioPathOrNull()}.align(Align.FILL).component
             }
         }

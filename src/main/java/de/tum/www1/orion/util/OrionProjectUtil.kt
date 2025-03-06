@@ -2,15 +2,11 @@ package de.tum.www1.orion.util
 
 import com.intellij.execution.RunManager
 import com.intellij.ide.impl.OpenProjectTask
-import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.module.Module
+import com.intellij.openapi.application.*
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.module.ModuleTypeId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.testFramework.runInEdtAndGet
 import de.tum.www1.orion.build.OrionLocalRunConfigurationSettingsFactory
 import org.jetbrains.annotations.SystemIndependent
 import java.io.File
@@ -44,7 +40,7 @@ object OrionProjectUtil {
     }
 
     @Deprecated("Deprecated newModule function")
-    fun newModule(project: Project, name: String): Module {
+    /*fun newModule(project: Project, name: String): Module {
         val modulePath = project.basePath + File.separatorChar + name
         FileUtil.ensureExists(File(modulePath))
         val moduleFilePath = modulePath + File.separatorChar + "$name.iml"
@@ -59,7 +55,7 @@ object OrionProjectUtil {
                 module
             }
         }
-    }
+    }*/
 
     /**
      * Creates a new gradle module

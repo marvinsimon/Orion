@@ -107,3 +107,7 @@ adding and updating any secrets that should get injected into the environment du
 ## Feedback? Questions?
 Email: krusche(at)tum(dot)de
 
+
+<!-- Plugin description -->
+Your plugin description goes here.
+<!-- Plugin description end -->

@@ -7,9 +7,14 @@ import com.intellij.execution.testframework.sm.ServiceMessageBuilder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.testFramework.runInEdtAndGet
+import com.intellij.openapi.application.*
+import com.intellij.testFramework.*
 import de.tum.www1.orion.dto.BuildError
 import de.tum.www1.orion.dto.BuildLogFileErrorsDTO
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -79,30 +84,40 @@ class OrionTestInterceptor(private val project: Project) : OrionTestParser {
         this.handler = null
     }
 
+    private suspend fun findLocalFilePath(project: Project, fileErrors: BuildLogFileErrorsDTO): String? {
+        return withContext(Dispatchers.IO) { // Run on background thread
+            readAction {
+                val potentialFiles = FilenameIndex.getVirtualFilesByName(
+                    fileErrors.fileName.substringAfterLast("/"),
+                    GlobalSearchScope.allScope(project)
+                )
+
+                potentialFiles.firstOrNull { it.path.contains(fileErrors.fileName) }
+                    ?.path
+            }
+        }
+    }
+
     override fun onCompileError(errors: List<BuildLogFileErrorsDTO>) {
         errors.forEach { fileErrors ->
             fileErrors.errors
-                    .toHashSet()
-                    .forEach { error ->
-                // Search for the full file path in the local file system
-                val localFilePath = runInEdtAndGet {
-                    val potentialFiles = FilenameIndex.getFilesByName(project, fileErrors.fileName.split("/").last(), GlobalSearchScope.allScope(project))
+                .toHashSet()
+                .forEach { error ->
+                    // Search for the full file path in the local file system
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val localFilePath = findLocalFilePath(project, fileErrors)
+                        val buildTest = ServiceMessageBuilder.testStarted("Compile & Build Error")
+                        val buildFinished = ServiceMessageBuilder.testFailed("Compile & Build Error")
+                        handler?.report(buildTest)
+                        if (localFilePath != null) {
+                            buildFinished.addAttribute("message", localFilePath.asFileBuildError(error))
+                        } else {
+                            buildFinished.addAttribute("message", error.asLogMessage())
+                        }
 
-                    potentialFiles.takeIf { potentialFiles.isNotEmpty() }
-                            ?.first { localFile -> localFile.virtualFile.path.contains(fileErrors.fileName) }
-                            ?.virtualFile?.path
+                        handler?.report(buildFinished)
+                    }
                 }
-
-                val buildTest = ServiceMessageBuilder.testStarted("Compile & Build Error")
-                val buildFinished = ServiceMessageBuilder.testFailed("Compile & Build Error")
-                handler?.report(buildTest)
-                if (localFilePath != null) {
-                    buildFinished.addAttribute("message", localFilePath.asFileBuildError(error))
-                } else {
-                    buildFinished.addAttribute("message", error.asLogMessage())
-                }
-                handler?.report(buildFinished)
-            }
         }
 
         handler?.destroyProcess()

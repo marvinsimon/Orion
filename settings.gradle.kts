@@ -1,15 +1,6 @@
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        maven{
-            setUrl("https://jetbrains.bintray.com/intellij-plugin-service")
-        }
-        maven {
-            setUrl("https://plugins.gradle.org/m2/")
-        }
-        mavenCentral()
-    }
+rootProject.name = "orion"
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
-rootProject.name = "orion"
 

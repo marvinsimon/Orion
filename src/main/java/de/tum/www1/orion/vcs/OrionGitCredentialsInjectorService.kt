@@ -14,8 +14,7 @@ class OrionGitCredentialsInjectorService : OrionGitCredentialsService {
         PasswordSafe.instance.set(
             CredentialAttributes(
                 generateServiceName("Git HTTP", artemisGitUrl),
-                artemisGitUrl,
-                OrionGitCredentialsInjectorService::class.java
+                artemisGitUrl
             ),
             Credentials(artemisGitUrl, password)
         )
@@ -29,8 +28,7 @@ class OrionGitCredentialsInjectorService : OrionGitCredentialsService {
         val artemisGitUrl = makeKey(username)
         return CredentialAttributes(
             generateServiceName("Git HTTP", artemisGitUrl),
-            artemisGitUrl,
-            OrionGitCredentialsInjectorService::class.java
+            artemisGitUrl
         )
     }
 

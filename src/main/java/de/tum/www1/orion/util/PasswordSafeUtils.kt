@@ -30,6 +30,6 @@ object PasswordSafeUtils {
         subsystem: String,
         requester: Class<*>?
     ): CredentialAttributes {
-        return CredentialAttributes(generateServiceName(subsystem, username), username, requester)
+        return CredentialAttributes(generateServiceName(subsystem, username), username)
     }
 }

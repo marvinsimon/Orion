@@ -93,9 +93,8 @@ class OrionPluginSettings(private val project: Project) : SearchableConfigurable
             }
             row {
                 projectPathField = textFieldWithBrowseButton(
-                    translate("orion.settings.path.browser.title"),
+                    FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(translate("orion.settings.path.browser.title")),
                     null,
-                    FileChooserDescriptorFactory.createSingleFolderDescriptor()
                 ).bindText({ currentProjectPath }) { it.toNioPathOrNull() }.align(Align.FILL).component
             }
             row {
@@ -103,9 +102,8 @@ class OrionPluginSettings(private val project: Project) : SearchableConfigurable
             }
             row {
                 tutorPathField = textFieldWithBrowseButton(
-                    translate("orion.settings.tutorPath.browser.title"),
+                    FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(translate("orion.settings.tutorPath.browser.title")),
                     null,
-                    FileChooserDescriptorFactory.createSingleFolderDescriptor()
                 ).bindText({ currentTutorPath }) { it.toNioPathOrNull() }.align(Align.FILL).component
             }
             row {
@@ -113,9 +111,9 @@ class OrionPluginSettings(private val project: Project) : SearchableConfigurable
             }
             row {
                 instructorPathField = textFieldWithBrowseButton(
-                    translate("orion.settings.instructorPath.browser.title"),
+                    FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(translate("orion.settings.instructorPath.browser.title")),
                     null,
-                    FileChooserDescriptorFactory.createSingleFolderDescriptor()
+
                 ).bindText({ currentInstructorPath }) { it.toNioPathOrNull() }.align(Align.FILL).component
             }
             row {
